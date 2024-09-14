@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+  </head>
+  <body>
+    <h1>Weather in Seattle</h1>
+    <div id="weather-info"></div>
+
+    <script>
+      async function getWeather() {
+        const url =
+          "https://weather-api167.p.rapidapi.com/api/weather/forecast?place=bhavnagar$&cnt=1";
+        const options = {
+          method: "GET",
+          headers: {
+            "x-rapidapi-key":
+              "d8ff7568bamsh04e5eca4c4ca458p1a13c6jsnffd755efc89d",
+            "x-rapidapi-host": "weather-api167.p.rapidapi.com",
+            Accept: "application/json",
+          },
+        };
+
+        try {
+          const response = await fetch(url, options);
+          const result = await response.json();
+          console.log(result);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      // Fetch weather when the page loads
+      getWeather();
+    </script>
+  </body>
+</html>

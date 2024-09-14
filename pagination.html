@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Pagination Example</title>
+    <style>
+      .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+      }
+      .pagination button {
+        margin: 0 5px;
+      }
+
+      .active-page {
+        background-color: rgb(24, 94, 117);
+        font-weight: bold;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="items"></div>
+    <ul class="pagination" id="pagination">
+      <li><button id="first-btn">First</button></li>
+      <li><button id="prev-btn" disabled>Previous</button></li>
+      <span id="page-buttons"></span>
+      <!-- Container for dynamic page buttons -->
+      <li><button id="next-btn">Next</button></li>
+      <li><button id="last-btn">Last</button></li>
+    </ul>
+
+    <script>
+     
+        let currentPage = 1; // The current page being displayed
+        const limit = 50; // Number of items to show per page
+        let totalItems = 0; // Total number of items available from the API
+        let totalPages = 0; // Total number of pages based on the total items and limit
+
+        // Function to fetch data from the API
+        function fetchData(page) {
+          const offset = (page - 1) * limit; // Calculate the offset for the API request
+          const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
+
+          fetch(url)
+            .then((response) => response.json()) // Parse the response as JSON
+            .then((data) => {
+              totalItems = data.count; // Update the total number of items
+              totalPages = Math.ceil(totalItems / limit); // Calculate total pages
+              // console.log(totalItems,totalPages);
+              displayItems(data.results); // Display the fetched items
+              updatePagination(); // Update pagination buttons
+            })
+            .catch((error) => console.error("Error:", error)); // Handle errors
+        }
+
+        // Function to display the fetched items in the UI
+        //   function displayItems(items) {
+        //     const itemsContainer = document.getElementById("items");
+        //     itemsContainer.innerHTML = ""; // Clear previous items
+        //     items.forEach((item) => {
+        //       const div = document.createElement("div"); the textcontent method only write text can not write any html tag or make tag
+        //       div.textContent = item.name; // Display item name (adjust as needed)
+        //       itemsContainer.appendChild(div); // Add item to the container
+        //     });
+        //   }
+
+        function displayItems(items) {
+          const itemsContainer = document.getElementById("items");
+          itemsContainer.innerHTML = ""; // Clear previous items
+
+          // Create a string of HTML content
+          let itemsHtml = items
+            .map((item) => `<span><b>${item.name}</b></span><br>`)
+            .join("");
+
+          // Set the innerHTML of the container
+          itemsContainer.innerHTML = itemsHtml;
+        }
+
+        // Function to update the pagination buttons
+        function updatePagination() {
+          const pageButtonsContainer = document.getElementById("page-buttons");
+
+          // Clear dynamic page number buttons
+          pageButtonsContainer.innerHTML = "";
+
+          // Generate dynamic page number buttons
+          const startPage = Math.max(1, currentPage - 4);
+        //   if(startPage < 10){
+
+        //   }
+
+          let endPage = Math.min(totalPages, currentPage + 4);
+          if (endPage <= 10) {
+            endPage = 10;
+          }
+
+          for (let page = startPage; page <= endPage; page++) {
+            const button = document.createElement("button");
+            button.textContent = page;
+            button.classList.add("pageButton");
+
+            // Check if the current button is for the active page
+            if (page === currentPage) {
+              button.classList.add("active-page"); // Highlight the current page
+            }
+
+
+            button.onclick = () => {
+              currentPage = page;
+              fetchData(currentPage);
+            };
+            pageButtonsContainer.appendChild(button);
+          }
+
+          // Update static button states
+          document.getElementById("prev-btn").disabled =
+            currentPage === 1 ? true : false;
+          document.getElementById("next-btn").disabled =
+            currentPage === totalPages ? true : false;
+        }
+
+        // Event listeners for static buttons
+        document.getElementById("first-btn").addEventListener("click", () => {
+          currentPage = 1;
+          fetchData(currentPage);
+        });
+
+        document.getElementById("prev-btn").addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            fetchData(currentPage);
+          }
+        });
+
+        document.getElementById("next-btn").addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            fetchData(currentPage);
+          }
+        });
+
+        document.getElementById("last-btn").addEventListener("click", () => {
+          currentPage = totalPages;
+          fetchData(currentPage);
+        });
+
+        // Initial fetch of data for page 1
+        fetchData(currentPage);
+    
+    </script>
+  </body>
+</html>
