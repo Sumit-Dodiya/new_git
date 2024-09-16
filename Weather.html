@@ -73,7 +73,7 @@
   </head>
   <body>
     <form id="myform">
-      <input type="text" id="city_name" placeholder="Enter city">
+      <input type="text" id="city_name" placeholder="Enter city" >
       <input type="submit" value="Search">
     </form>
     <div id="weather-info">
@@ -86,6 +86,11 @@
     </div>
 
     <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Fetch weather for default city on page load
+        getWeather("Bhavnagar");
+      });
+
       document.getElementById("myform").addEventListener("submit", (event) => {
         event.preventDefault();
         const cityname = document.getElementById("city_name").value.trim();
