@@ -4,41 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      #myform {
+        text-align: center;
+        margin: 20px;
+      }
+
+      #myform input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+      }
+
+      #myform input[type="submit"] {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      #myform input[type="submit"]:hover {
+        background-color: #0056b3;
+      }
+
+      h1, p {
+        text-align: center;
+        color: #333;
+      }
+
+      #city {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      #temp, #wind, #cloud {
+        font-size: 18px;
+        margin: 10px 0;
+      }
+
+      #weather-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .weather-detail {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        width: 80%;
+        max-width: 600px;
+      }
+    </style>
   </head>
   <body>
     <form id="myform">
-      <input type="text" id="city_name" placeholder="Enter city"><br>
+      <input type="text" id="city_name" placeholder="Enter city">
       <input type="submit" value="Search">
     </form>
-    <h1 id="city"></h1>
-    <p id="temp"></p>
-    <p id="wind"></p>
-    <p id="cloud"></p>
-    <div id="weather-info"></div>
+    <div id="weather-info">
+      <h1 id="city"></h1>
+      <div class="weather-detail">
+        <p id="temp"></p>
+        <p id="wind"></p>
+        <p id="cloud"></p>
+      </div>
+    </div>
 
     <script>
-      document.getElementById("myform").addEventListener("submit",(event)=>{
+      document.getElementById("myform").addEventListener("submit", (event) => {
         event.preventDefault();
-        const cityname = document.getElementById("city_name").value;
-        if(cityname == ' '){
+        const cityname = document.getElementById("city_name").value.trim();
+        if (cityname === '') {
           alert("Enter City Name!!");
           return false;
-        }
-        else{
-          // console.log(cityname);
+        } else {
           getWeather(cityname);
         }
-      })
+      });
 
       async function getWeather(cityname) {
-        // console.log(cityname);
-        const url =
-          `https://weather-api167.p.rapidapi.com/api/weather/forecast?place=${cityname}$&cnt=1`;
+        const url = `https://weather-api167.p.rapidapi.com/api/weather/forecast?place=${cityname}&cnt=1`;
         const options = {
           method: "GET",
           headers: {
-            "x-rapidapi-key":
-              "d8ff7568bamsh04e5eca4c4ca458p1a13c6jsnffd755efc89d",
+            "x-rapidapi-key": "d8ff7568bamsh04e5eca4c4ca458p1a13c6jsnffd755efc89d",
             "x-rapidapi-host": "weather-api167.p.rapidapi.com",
             Accept: "application/json",
           },
@@ -47,35 +111,25 @@
         try {
           const response = await fetch(url, options);
           const result = await response.json();
-          // console.log(result);
-
-          //desplay city
           document.getElementById("city").innerHTML = `Weather in ${result.city.name}`;
 
-          //diplay temp
-          document.getElementById("temp").innerHTML = 
-          `<b>Temperature : </b>${((result.list[0].main.temp) - 273.15).toFixed(2)}&deg;C <br>
-           <b>Feels Like : </b>${((result.list[0].main.feels_like) - 273.15).toFixed(2)}&deg;C <br>
-           <b>Max Temperature : </b>${((result.list[0].main.temp_max) - 273.15).toFixed(2)}&deg;C <br>
-           <b>Min Temperature : </b>${((result.list[0].main.temp_min) - 273.15).toFixed(2)}&deg;C <br>
-           <b>Humidity : </b>${result.list[0].main.humidity}% <br>
-          `
-          //wind speed
-          document.getElementById("wind").innerHTML = 
-          `<b>Wind Speed : </b>${((result.list[0].wind.speed)*3.6).toFixed(2)} km/h<br>
-          `
-          //cloud
-          document.getElementById("cloud").innerHTML = 
-          `
-          <b>Weather Desscription : </b>${result.list[0].weather[0].description}
-          `
+          document.getElementById("temp").innerHTML =
+            `<b>Temperature:</b> ${((result.list[0].main.temp) - 273.15).toFixed(2)}&deg;C <br>
+             <b>Feels Like:</b> ${((result.list[0].main.feels_like) - 273.15).toFixed(2)}&deg;C <br>
+             <b>Max Temperature:</b> ${((result.list[0].main.temp_max) - 273.15).toFixed(2)}&deg;C <br>
+             <b>Min Temperature:</b> ${((result.list[0].main.temp_min) - 273.15).toFixed(2)}&deg;C <br>
+             <b>Humidity:</b> ${result.list[0].main.humidity}% <br>`;
+
+          document.getElementById("wind").innerHTML =
+            `<b>Wind Speed:</b> ${((result.list[0].wind.speed) * 3.6).toFixed(2)} km/h<br>`;
+
+          document.getElementById("cloud").innerHTML =
+            `<b>Weather Description:</b> ${result.list[0].weather[0].description}`;
 
         } catch (error) {
           console.error(error);
         }
       }
-
-
     </script>
   </body>
 </html>
