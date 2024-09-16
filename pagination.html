@@ -39,7 +39,7 @@
     <script>
      
         let currentPage = 1; // The current page being displayed
-        const limit = 50; // Number of items to show per page
+        const limit = 10; // Number of items to show per page
         let totalItems = 0; // Total number of items available from the API
         let totalPages = 0; // Total number of pages based on the total items and limit
 
@@ -92,14 +92,11 @@
           pageButtonsContainer.innerHTML = "";
 
           // Generate dynamic page number buttons
-          const startPage = Math.max(1, currentPage - 4);
-        //   if(startPage < 10){
-
-        //   }
-
-          let endPage = Math.min(totalPages, currentPage + 4);
-          if (endPage <= 10) {
-            endPage = 10;
+          const startPage = Math.max(1, currentPage - 2);
+         
+          let endPage = Math.min(totalPages, currentPage + 2);
+          if (endPage <= 5) {
+            endPage = 5;
           }
 
           for (let page = startPage; page <= endPage; page++) {
