@@ -6,13 +6,34 @@
     <title>Weather App</title>
   </head>
   <body>
-    <h1>Weather in Seattle</h1>
+    <form id="myform">
+      <input type="text" id="city_name" placeholder="Enter city"><br>
+      <input type="submit" value="Search">
+    </form>
+    <h1 id="city"></h1>
+    <p id="temp"></p>
+    <p id="wind"></p>
+    <p id="cloud"></p>
     <div id="weather-info"></div>
 
     <script>
-      async function getWeather() {
+      document.getElementById("myform").addEventListener("submit",(event)=>{
+        event.preventDefault();
+        const cityname = document.getElementById("city_name").value;
+        if(cityname == ' '){
+          alert("Enter City Name!!");
+          return false;
+        }
+        else{
+          // console.log(cityname);
+          getWeather(cityname);
+        }
+      })
+
+      async function getWeather(cityname) {
+        // console.log(cityname);
         const url =
-          "https://weather-api167.p.rapidapi.com/api/weather/forecast?place=bhavnagar$&cnt=1";
+          `https://weather-api167.p.rapidapi.com/api/weather/forecast?place=${cityname}$&cnt=1`;
         const options = {
           method: "GET",
           headers: {
@@ -26,14 +47,35 @@
         try {
           const response = await fetch(url, options);
           const result = await response.json();
-          console.log(result);
+          // console.log(result);
+
+          //desplay city
+          document.getElementById("city").innerHTML = `Weather in ${result.city.name}`;
+
+          //diplay temp
+          document.getElementById("temp").innerHTML = 
+          `<b>Temperature : </b>${((result.list[0].main.temp) - 273.15).toFixed(2)}&deg;C <br>
+           <b>Feels Like : </b>${((result.list[0].main.feels_like) - 273.15).toFixed(2)}&deg;C <br>
+           <b>Max Temperature : </b>${((result.list[0].main.temp_max) - 273.15).toFixed(2)}&deg;C <br>
+           <b>Min Temperature : </b>${((result.list[0].main.temp_min) - 273.15).toFixed(2)}&deg;C <br>
+           <b>Humidity : </b>${result.list[0].main.humidity}% <br>
+          `
+          //wind speed
+          document.getElementById("wind").innerHTML = 
+          `<b>Wind Speed : </b>${((result.list[0].wind.speed)*3.6).toFixed(2)} km/h<br>
+          `
+          //cloud
+          document.getElementById("cloud").innerHTML = 
+          `
+          <b>Weather Desscription : </b>${result.list[0].weather[0].description}
+          `
+
         } catch (error) {
           console.error(error);
         }
       }
 
-      // Fetch weather when the page loads
-      getWeather();
+
     </script>
   </body>
 </html>
