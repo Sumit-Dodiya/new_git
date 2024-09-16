@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #news {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+        justify-content: start;
+      }
+      .card {
+        padding: 10px;
+        height: auto;
+        width: 250px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+      .card-img img {
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
+        border-bottom: 1px solid #ddd;
+      }
+      .card-title {
+        padding: 10px;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #333;
+        height: 100px;
+      }
+      .description {
+        padding: 10px;
+        flex-grow: 1;
+        font-size: 0.9em;
+        color: #555;
+      }
+      a {
+        display: block;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+        border-top: 1px solid #ddd;
+        background-color: #f8f9fa;
+      }
+      a:hover {
+        background-color: #e2e6ea;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="news"></div>
+  </body>
+  <script>
+    fetch(
+      "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=af8d7ddd996a4ea89a9047d969b67726"
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data.articles);
+        diplayNews(data.articles);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    function diplayNews(data) {
+      let news = data;
+      const filteredNews = news.filter(
+        (item) => item.title && item.urlToImage && item.description && item.url
+      );
+      const newsdata = filteredNews
+        .map((item) => {
+          return `
+                <div class="card">
+                    <div class="card-title">
+                        <b>${item.title}</b>
+                    </div>
+                    <div class="card-img">
+                        <img src="${item.urlToImage}" alt="News Image">
+                    </div>
+                    <div class="description">
+                        <p>${item.description}</p>
+                    </div>
+                    <a href="${item.url}" target="_blank">Read More</a>
+                </div>`;
+        })
+        .join("");
+
+      document.getElementById("news").innerHTML = newsdata;
+    }
+  </script>
+</html>
